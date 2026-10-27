@@ -60,7 +60,8 @@ def answer_question(
 ) -> str:
     """Собрать ответ агента, записать трассу Langfuse и оценку source-present."""
 
-
+    # propagate_attributes используется для записи атрибутов 
+    # пользователя и сессии в трассу Langfuse.
     with propagate_attributes(
         user_id=user_id,
         session_id=session_id,
@@ -84,6 +85,7 @@ def answer_question(
         )
         answer = completion.choices[0].message.content or ""
 
+        # Оценка наличия источника в ответе и запись результата в трассу Langfuse.
         get_client().score_current_trace(
             name="source-present",
             value=float(SOURCE_LINE in answer),
